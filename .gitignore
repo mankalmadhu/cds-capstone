@@ -1,2 +1,4 @@
 /.ipynb_checkpoints
 /learner_script.py
+__pycache__/
+ *.pyc
