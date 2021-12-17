@@ -10,7 +10,7 @@ from pages import demo, about
 app = MultiPage()
 
 # Title of the main page
-display = Image.open('resources/logo.png')
+display = Image.open('resources/logo2.png')
 display = np.array(display)
 col1, col2 = st.columns(2)
 col1.image(display, width=800)

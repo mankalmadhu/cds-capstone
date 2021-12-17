@@ -9,11 +9,8 @@ class MultiPage:
         self.pages[title] =  func
             
     def run(self):
-        # Drodown to select the page to run  
-        page = st.sidebar.selectbox(
-            'Go to Page', 
-            self.pages.keys(), 
-        )
+        st.sidebar.title('Navigation')
+        selection = st.sidebar.radio("Go to", self.pages.keys())
 
         # run the app function 
-        self.pages[page]()
+        self.pages[selection]()
