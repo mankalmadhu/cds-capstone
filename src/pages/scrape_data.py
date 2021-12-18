@@ -9,7 +9,7 @@ def render_page():
     )
 
     date_to_fetch = '2021-09-13'
-    # scrape_tweet_data(date_to_fetch)
+    scrape_tweet_data(date_to_fetch)
     delta_read_df = spark.read.format("delta").load(
         build_delta_table_path(f'{date_to_fetch}_clean-dataset'))
 

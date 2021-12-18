@@ -5,8 +5,8 @@ import pandas as pd
 import math
 from time import sleep
 import tweepy
-import src.be.spark_session_builder as spark_session_builder
-from src.be.fetch_secrets import fetch_twitter_secrets
+import be.spark_session_builder as spark_session_builder
+from be.fetch_secrets import fetch_twitter_secrets
 
 spark = spark_session_builder.build()
 
