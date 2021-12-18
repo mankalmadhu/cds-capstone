@@ -6,7 +6,6 @@ import math
 from time import sleep
 import tweepy
 import be.spark_session_builder as spark_session_builder
-from be.fetch_secrets import fetch_twitter_secrets
 
 spark = spark_session_builder.build()
 
@@ -56,11 +55,11 @@ def build_filtered_json_list(tweet_list):
 
 
 def build_twitter_api_object():
-    twiitter_secrets = fetch_twitter_secrets()
-    auth = tweepy.OAuthHandler(twiitter_secrets.consumer_key,
-                               twiitter_secrets.consumer_secret)
-    auth.set_access_token(twiitter_secrets.access_key,
-                          twiitter_secrets.access_secret)
+
+    auth = tweepy.OAuthHandler(os.environ['twitter_consumer_key'],
+                               os.environ['twitter_consumer_secret'])
+    auth.set_access_token(os.environ['twitter_access_key'],
+                          os.environ['twitter_access_secret'])
     api = tweepy.API(auth,
                      retry_delay=60 * 3,
                      retry_count=5,
