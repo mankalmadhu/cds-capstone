@@ -5,8 +5,8 @@ import pandas as pd
 import math
 from time import sleep
 import tweepy
-import spark_session_builder
-from fetch_secrets import fetch_twitter_secrets
+import src.be.spark_session_builder as spark_session_builder
+from src.be.fetch_secrets import fetch_twitter_secrets
 
 spark = spark_session_builder.build()
 
@@ -125,8 +125,9 @@ def scrape_tweet_data(date_to_fetch):
 
 if __name__ == "__main__":
     date_to_fetch = '2021-09-13'
-    scrape_tweet_data(date_to_fetch)
+    # scrape_tweet_data(date_to_fetch)
     delta_read_df = spark.read.format("delta").load(
         build_delta_table_path(f'{date_to_fetch}_clean-dataset'))
     print(f'Count of tweets {delta_read_df.count()}')
-    delta_read_df.show(10)
+    psdf = delta_read_df.to_pandas_on_spark()
+    print(psdf)
