@@ -2,10 +2,13 @@ import os
 import streamlit as st
 import numpy as np
 from PIL import Image
+from dotenv import load_dotenv
 
 # Custom imports
 from multi_page import MultiPage
 from pages import demo, about, scrape_data
+
+load_dotenv()
 
 app = MultiPage()
 
