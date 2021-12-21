@@ -105,7 +105,8 @@ def fetch_tweets(twitter_api_obj, id_df, start, step_size, upto=None):
 def save_to_delta_table(delta_table_path, filtered_tweets):
     spark = spark_session_builder.build()
     df_spark = spark.createDataFrame(filtered_tweets)
-    df_spark.write.format("delta").mode("append").save(delta_table_path)
+    df_spark.write.format("delta").mode("append").option(
+        'path', delta_table_path).saveAsTable('hydrated_tweets')
 
 
 def scrape_tweet_data(date_to_fetch):
