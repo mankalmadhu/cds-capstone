@@ -7,7 +7,7 @@ from time import sleep
 import tweepy
 import be.spark_session_builder as spark_session_builder
 
-spark = spark_session_builder.build()
+hydrated_tweet_delta_table = os.environ['hydrated_tweet_table_path']
 
 
 def load_daily_tweets_to_df(date_str):
@@ -102,11 +102,8 @@ def fetch_tweets(twitter_api_obj, id_df, start, step_size, upto=None):
                 continue
 
 
-def build_delta_table_path(delta_file_name) -> str:
-    return f"data/hydrated_tweets/{delta_file_name}"
-
-
 def save_to_delta_table(delta_table_path, filtered_tweets):
+    spark = spark_session_builder.build()
     df_spark = spark.createDataFrame(filtered_tweets)
     df_spark.write.format("delta").mode("append").save(delta_table_path)
 
@@ -114,19 +111,18 @@ def save_to_delta_table(delta_table_path, filtered_tweets):
 def scrape_tweet_data(date_to_fetch):
     dailies_df = load_daily_tweets_to_df(date_to_fetch)
     dailies_df_filtered = filter_by_language(dailies_df)
-    delta_table_path = build_delta_table_path(f'{date_to_fetch}_clean-dataset')
     fetched_tweets_itr = fetch_tweets(build_twitter_api_object(),
                                       dailies_df_filtered, 0, 5, 10)
     for fetched_tweets in fetched_tweets_itr:
         filtered_tweets = build_filtered_json_list(fetched_tweets)
-        save_to_delta_table(delta_table_path, filtered_tweets)
+        save_to_delta_table(hydrated_tweet_delta_table, filtered_tweets)
 
 
 if __name__ == "__main__":
     date_to_fetch = '2021-09-13'
-    # scrape_tweet_data(date_to_fetch)
-    delta_read_df = spark.read.format("delta").load(
-        build_delta_table_path(f'{date_to_fetch}_clean-dataset'))
+    scrape_tweet_data(date_to_fetch)
+    spark = spark_session_builder.build()
+    delta_read_df = spark.read.format("delta").load(hydrated_tweet_delta_table)
     print(f'Count of tweets {delta_read_df.count()}')
     psdf = delta_read_df.to_pandas_on_spark()
     print(psdf)
