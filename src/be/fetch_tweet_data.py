@@ -7,8 +7,7 @@ from time import sleep
 import tweepy
 import be.spark_session_builder as spark_session_builder
 
-hydrated_tweet_delta_table = os.environ.get(
-    'hydrated_tweet_table_path', 's3a://cds-capstone/data/hydrated_tweets_del')
+hydrated_tweet_delta_table = os.environ['hydrated_tweet_table_path']
 
 
 def load_daily_tweets_to_df(date_str):
