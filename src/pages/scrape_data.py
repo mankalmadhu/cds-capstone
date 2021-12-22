@@ -13,10 +13,8 @@ def render_page():
     date_to_fetch = '2021-09-13'
     scrape_tweet_data(date_to_fetch)
     spark = spark_session_builder.build()
-    fp = os.environ['hydrated_tweet_table_path']
-    delta_read_df = spark.read.format("delta").option(
-        'path',
-        os.environ['hydrated_tweet_table_path']).table('hydrated_tweets')
+    delta_read_df = spark.read.format("delta").load(
+        os.environ['hydrated_tweet_table_path'])
 
     st.write(f'Count of tweets {delta_read_df.count()}')
     st.dataframe(delta_read_df.toPandas())
