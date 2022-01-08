@@ -102,7 +102,9 @@ class Finisher(Transformer, DefaultParamsReadable, DefaultParamsWritable):
         return dropped_cols_df
 
 
-def preprocess_tweet(hydrated_tweet_df):
+def preprocess_tweet(hydrated_tweet_df,
+                     cleaned_data_path=None,
+                     cleaned_pipeline_path=None):
 
     tweet_cleaner = TweetCleaner(inputCol='text', outputCol='cleaned_text')
 
@@ -127,8 +129,12 @@ def preprocess_tweet(hydrated_tweet_df):
 
     cleaned_tweet_df = pipeline_model.transform(hydrated_tweet_df)
 
-    pipeline_model.write().overwrite().save(
-        os.environ['tweet_cleaner_pipeline'])
+    if cleaned_pipeline_path:
+        pipeline_model.write().overwrite().save(cleaned_pipeline_path)
+
+    if cleaned_data_path:
+        cleaned_tweet_df.write.format("delta").mode("append").save(
+            cleaned_data_path)
 
     return cleaned_tweet_df
 
@@ -141,10 +147,14 @@ if __name__ == "__main__":
 
     import be.spark_session_builder as spark_session_builder
 
+    hydrated_tweet_path = os.environ['hydrated_tweet_table_path']
+    cleaned_tweet_path = os.environ['cleaned_tweet_table_path']
+    cleaner_pipeline_path = os.environ['tweet_cleaner_pipeline']
+
     spark = spark_session_builder.build()
-    hydrated_tweet_df = spark.read.format("delta").load(
-        os.environ['hydrated_tweet_table_path'])
-    df = preprocess_tweet(hydrated_tweet_df)
+    hydrated_tweet_df = spark.read.format("delta").load(hydrated_tweet_path)
+    df = preprocess_tweet(hydrated_tweet_df, cleaned_tweet_path,
+                          cleaner_pipeline_path)
     df.select('text', 'lemmatized_text').show(truncate=False)
     print(df.columns)
 

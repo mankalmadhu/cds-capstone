@@ -9,7 +9,7 @@ from PIL import Image
 
 # Custom imports
 from multi_page import MultiPage
-from pages import demo, about, scrape_data
+from pages import demo, about, scrape_data, clean_data
 
 app = MultiPage()
 
@@ -23,5 +23,6 @@ col2.title(" ")
 app.add_page("Course Era Demo", demo.render_page)
 app.add_page("About Project", about.render_page)
 app.add_page("Scrape Data", scrape_data.render_page)
+app.add_page("Clean Data", clean_data.render_page)
 
 app.run()
